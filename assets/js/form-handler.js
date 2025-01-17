@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       // Send data to server
-      const response = await fetch("https://www.luxestylebarber.nl/:3000/book-appointment", {
+      const response = await fetch("https://www.luxestylebarber.nl/book-appointment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
