@@ -929,20 +929,18 @@ a.contact-link:is(:hover, :focus) {
 .copyright-link {
   display: inline-block;
   color: var(--indian-yellow);
-}
-.owner-section {
+}.owner-section {
   text-align: right;
   margin-top: 20px;
 }
 
 .owner-image {
-  width: 100%;
-  max-width: 100px;
-  height: auto;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 10px;
-  margin-left: 213px; /* Retain desktop alignment */
+  margin-left: 243px;
 }
 
 .owner-name {
@@ -950,29 +948,41 @@ a.contact-link:is(:hover, :focus) {
   font-size: var(--fs-18);
   font-family: var(--ff-oswald);
   font-weight: var(--fw-600);
+  margin-right: 20px;
 }
 
+/* Medium Screens (Tablets) */
 @media (max-width: 768px) {
   .owner-section {
-    text-align: center;
+    text-align: center; /* Center aligns content on smaller screens */
     margin-top: 10px;
   }
 
   .owner-image {
-    margin-left: auto; /* Center image on smaller screens */
-    margin-right: auto;
+    margin-left: 0;
+    margin-right: auto; /* Ensures the image is centered */
   }
 }
 
+/* Small Screens (Phones) */
 @media (max-width: 480px) {
-  .owner-name {
-    font-size: var(--fs-16);
+  .owner-section {
+    margin-top: 5px;
   }
 
   .owner-image {
-    max-width: 80px;
+    width: 80px; /* Smaller size for better fit */
+    height: 80px;
+    margin: 0 auto; /* Centers the image */
+  }
+
+  .owner-name {
+    font-size: var(--fs-16); /* Adjusts font size for readability */
+    margin-right: 0; /* Removes extra right margin */
+    text-align: center; /* Centers text below the image */
   }
 }
+
 /*-----------------------------------*\
   #BACK TO TOP
 \*-----------------------------------*/
