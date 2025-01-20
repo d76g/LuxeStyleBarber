@@ -904,20 +904,8 @@
                     />
                   </div>
 
-                  <!-- Tijdslot Dropdown -->
-                  <div>
-                    
-                  </div>
                   <div class="input-wrapper">
-                    <select
-                      id="time"
-                      name="time"
-                      required
-                      class="input-field w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    >
-                      <option value="">Selecteer eerst een datum</option>
-                      <!-- Dynamisch invullen -->
-                    </select>
+                    
                     <select
                       id="category"
                       name="category"
@@ -939,7 +927,15 @@
                       </option>
                       <option value="Verven">Verven</option>
                     </select>
-
+                    <select
+                      id="time"
+                      name="time"
+                      required
+                      class="input-field w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="" selected>Selecteer eerst een datum</option>
+                      <!-- Dynamisch invullen -->
+                    </select>
                     <select
                       id="barberName"
                       name="barberName"
