@@ -178,7 +178,7 @@ app.post("/admin/dashboard/add-appointment", async (req, res) => {
     const isAvailable = await isTimeSlotAvailable(date, time);
     if (!isAvailable) {
       return res.status(400).json({
-        error: `The time slot on ${date} at ${time} is already booked.`,
+        error: `Het tijdslot op ${date} om ${time} is al geboekt.`,
       });
     }
 
@@ -227,7 +227,7 @@ app.post("/admin/dashboard/add-appointment", async (req, res) => {
   <p>We kijken ernaar uit om u te zien!</p>
 `;
 
-    // Send emails
+    // // Send emails
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.ADMIN_EMAIL, // Admin email from environment variables
@@ -335,16 +335,15 @@ app.post("/book-appointment", async (req, res) => {
 });
 
 const serviceDurations = {
-  "Knippen": 30,
+  Knippen: 30,
   "Haar en Scheren": 45,
   "Baard Scheren": 15,
   "Kinderen tot 10 jaar": 30,
-  "Senioren 60+": 15,
+  Senioren: 15,
   "Studenten knippen": 30,
   "Volledige service": 60,
-  "Verven": 15,
+  Verven: 15,
 };
-
 
 app.get("/api/available-slots", async (req, res) => {
   const { date, category } = req.query;
@@ -365,80 +364,97 @@ app.get("/api/available-slots", async (req, res) => {
       [date]
     );
 
-    const appointments = appointmentsResult.rows;
+    const appointments = appointmentsResult.rows.map((row) => row.time);
 
-    // Get the list of all barbers (users) in the system
-    const barbersResult = await pool.query("SELECT name FROM Users"); // Adjust query as needed
+    // Get all barbers
+    const barbersResult = await pool.query("SELECT name FROM Users");
     const allBarbers = barbersResult.rows.map((row) => row.name);
 
     if (allBarbers.length === 0) {
       return res.status(400).json({ error: "No barbers available." });
     }
 
-    // Create time slots from 11 AM to 8 PM
-    const startTime = 11 * 60; // Start time in minutes
-    const endTime = 20 * 60;  // End time in minutes
+    // Create time slots
+    const startTime = 11 * 60; // 11:00 AM in minutes
+    const endTime = 20 * 60; // 8:00 PM in minutes
+    const now = new Date();
+
+    let currentMinutes = 0;
+    if (date === now.toISOString().split("T")[0]) {
+      currentMinutes = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
+    }
 
     const allSlots = [];
     for (let time = startTime; time < endTime; time += serviceDuration) {
-      const hours = Math.floor(time / 60).toString().padStart(2, "0");
+      if (date === now.toISOString().split("T")[0] && time < currentMinutes) {
+        continue; // Skip past time slots for today
+      }
+
+      const hours = Math.floor(time / 60)
+        .toString()
+        .padStart(2, "0");
       const minutes = (time % 60).toString().padStart(2, "0");
-      const formattedTime = `${hours}:${minutes}`;
-      allSlots.push({ timeInMinutes: time, formattedTime });
+      allSlots.push(`${hours}:${minutes}`);
     }
 
-    // Calculate available slots based on barbers' capacity
+    // Determine available slots
     const availableSlots = allSlots.filter((slot) => {
-      const slotStart = slot.timeInMinutes;
-      const slotEnd = slotStart + serviceDuration;
-
-      // Find the appointments overlapping this slot
-      const overlappingAppointments = appointments.filter((appt) => {
-        const apptStart = parseInt(appt.time, 10);
-        const apptEnd = apptStart + serviceDuration;
-        return (
-          (apptStart < slotEnd && apptStart >= slotStart) || // Overlap at the start
-          (apptEnd > slotStart && apptEnd <= slotEnd)        // Overlap at the end
-        );
-      });
-
-      // Check if the number of overlapping appointments exceeds the number of barbers
+      const overlappingAppointments = appointments.filter(
+        (appt) => appt === slot
+      );
       return overlappingAppointments.length < allBarbers.length;
     });
 
-    // Return only the formatted times
-    res.json({ availableSlots: availableSlots.map((slot) => slot.formattedTime) });
+    res.json({ availableSlots });
   } catch (error) {
     console.error("Error fetching available slots:", error);
     res.status(500).json({ error: "Failed to fetch available slots." });
   }
 });
 
-
 app.get("/api/available-barbers", async (req, res) => {
   const { date, time, category } = req.query;
 
   if (!date || !time || !category) {
-    return res.status(400).json({ error: "Date, time, and category are required." });
+    return res
+      .status(400)
+      .json({ error: "Date, time, and category are required." });
   }
 
   try {
     const serviceDuration = serviceDurations[category];
     if (!serviceDuration) {
-      return res.status(400).json({ error: "Invalid service category." });
+      return res.status(400).json({ error: "Ongeldige servicecategorie." });
     }
 
-    const result = await pool.query(
+    // Convert `time` to minutes since midnight
+    const [hours, minutes] = time.split(":").map(Number);
+    const timeInMinutes = hours * 60 + minutes;
+
+    // Fetch all barbers
+    const barbersResult = await pool.query("SELECT name FROM Users");
+    const allBarbers = barbersResult.rows.map((row) => row.name);
+
+    if (allBarbers.length === 0) {
+      return res.status(400).json({ error: "Geen kappers beschikbaar" });
+    }
+
+    // Fetch barbers booked for the given date and overlapping time slot
+    const bookedResult = await pool.query(
       `SELECT barber_name 
        FROM Appointments 
        WHERE date = $1 
-       AND (time::int BETWEEN $2 AND $3 OR time::int + $4 > $2)`,
-      [date, time, parseInt(time) + serviceDuration, serviceDuration]
+       AND (
+         (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) BETWEEN $2 AND $3
+         OR 
+         (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4) > $2
+       )`,
+      [date, timeInMinutes, timeInMinutes + serviceDuration, serviceDuration]
     );
 
-    const bookedBarbers = result.rows.map((row) => row.barber_name);
+    const bookedBarbers = bookedResult.rows.map((row) => row.barber_name);
 
-    const allBarbers = ["Barber1", "Barber2", "Barber3", "Barber4", "Barber5"]; // Replace with actual data from your database
+    // Determine available barbers
     const availableBarbers = allBarbers.filter(
       (barber) => !bookedBarbers.includes(barber)
     );
@@ -446,7 +462,7 @@ app.get("/api/available-barbers", async (req, res) => {
     res.json({ availableBarbers });
   } catch (error) {
     console.error("Error fetching available barbers:", error);
-    res.status(500).json({ error: "Failed to fetch available barbers." });
+    res.status(500).json({ error: "Het ophalen van beschikbare kappers is mislukt." });
   }
 });
 

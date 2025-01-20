@@ -19,12 +19,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle the submit button state
     const button = form.querySelector('button[type="submit"]');
     const originalText = button.innerHTML; // Capture the original button text
-    button.innerHTML = '<span class="span">Processing...</span>';
+    button.innerHTML = '<span class="span">Verwerken...</span>';
     button.disabled = true;
+
+    const prodApiURL = "https://www.luxestylebarber.nl/book-appointment";
+    const testApiURL = 'http://localhost:3000/book-appointment';
 
     try {
       // Send data to server
-      const response = await fetch("https://www.luxestylebarber.nl/book-appointment", {
+      const response = await fetch('/book-appointment', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,15 +39,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (response.status === 200) {
         // Show success message
-        alert("Appointment successfully booked!");
+        Swal.fire({
+          title: 'Succes',
+          text: 'U ontvangt een bevestigingsmail',
+          icon: 'success',
+          confirmButtonText: 'Okè'
+        })
         form.reset(); // Reset the form after successful submission
       } else {
         throw new Error(result.message || "Booking failed");
       }
     } catch (error) {
       // Show error message
-      alert("Error booking appointment. Please try again.");
-      console.error("Booking error:", error);
+      Swal.fire({
+        title: 'Opps',
+        text: 'Er is iets misgegaan, probeer ons te bellen voor een afspraak',
+        icon: 'error',
+        confirmButtonText: 'Okè'
+      })
     } finally {
       // Reset button state
       button.innerHTML = originalText;
@@ -57,7 +69,12 @@ document.addEventListener("DOMContentLoaded", function () {
   dateInput.addEventListener("input", function () {
     const today = new Date().toISOString().split("T")[0];
     if (this.value < today) {
-      alert("Please select a future date");
+      Swal.fire({
+        title: 'Opps',
+        text: 'Selecteer een toekomstige datum',
+        icon: 'error',
+        confirmButtonText: 'Okè'
+      })
       this.value = today;
     }
   });

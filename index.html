@@ -34,6 +34,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
 
   <body id="top">
@@ -100,7 +101,9 @@
                 >
               </li>
               <li class="navbar-item">
-                <a href="#products" class="navbar-link" data-nav-link>Producten</a>
+                <a href="#products" class="navbar-link" data-nav-link
+                  >Producten</a
+                >
               </li>
               <li class="navbar-item">
                 <a href="#gallery" class="navbar-link" data-nav-link>Galerij</a>
@@ -110,7 +113,6 @@
                   >Afspraak maken</a
                 >
               </li>
-             
             </ul>
           </nav>
 
@@ -375,8 +377,6 @@
                   </button>
                 </li>
 
-              
-
                 <li>
                   <button class="filter-btn" data-filter-btn="studenten">
                     <div class="btn-icon">
@@ -429,7 +429,7 @@
                     </figure>
 
                     <div class="wrapper">
-                      <h3 class="h3 card-title">Haar en Scheren</h3>
+                      <h3 class="h3 card-title">Knippen en Scheren</h3>
 
                       <p class="card-text">30-50 minuten</p>
                     </div>
@@ -506,7 +506,7 @@
                     <div class="wrapper">
                       <h3 class="h3 card-title">Senioren 60+</h3>
 
-                      <p class="card-text">30-50 minuten</p>
+                      <p class="card-text">20-30 minuten</p>
                     </div>
 
                     <data class="card-price" value="89">€14.99</data>
@@ -533,7 +533,7 @@
                     <div class="wrapper">
                       <h3 class="h3 card-title">Volledige service</h3>
 
-                      <p class="card-text">60 minuten</p>
+                      <p class="card-text">15 minuten</p>
                     </div>
 
                     <data class="card-price" value="39.99">€39.99</data>
@@ -685,9 +685,14 @@
           <div id="productsContainer" class="products_shop">
             <!-- Product cards will be dynamically inserted here -->
           </div>
-          <button id="seeMoreButton" onclick="loadMoreProducts()" class="see-more hidden">See More</button>
+          <button
+            id="seeMoreButton"
+            onclick="loadMoreProducts()"
+            class="see-more hidden"
+          >
+            See More
+          </button>
         </section>
-        
 
         <!-- 
         - #GALLERY
@@ -868,6 +873,8 @@
                       required
                       class="input-field"
                     />
+                  </div>
+                  <div class="input-wrapper">
                     <input
                       type="email"
                       id="email"
@@ -876,9 +883,6 @@
                       required
                       class="input-field"
                     />
-                  </div>
-
-                  <div class="input-wrapper">
                     <input
                       type="text"
                       id="phone"
@@ -887,40 +891,7 @@
                       required
                       class="input-field"
                     />
-                    <select
-                      id="category"
-                      name="category"
-                      class="input-field"
-                      required
-                    >
-
-                      <option value="Knippen" selected>Knippen</option>
-                      <option value="Haar en Scheren">Haar en Scheren</option>
-                      <option value="Baard Scheren">Baard Scheren</option>
-                      <option value="Kinderen tot 10 jaar">
-                        Kinderen tot 10 jaar
-                      </option>
-                      <option value="Senioren 60+">Senioren 60+</option>
-                      <option value="Studenten knippen">
-                        Studenten knippen
-                      </option>
-                      <option value="Volledige service">
-                        Volledige service
-                      </option>
-                      <option value="Verven">Verven</option>
-                    </select>
-
-                    <select
-                      id="barberName"
-                      name="barberName"
-                      class="input-field"
-                      required
-                    >
-                      <option value="">Selecteer een kapper</option>
-                      <!-- Dynamisch invullen -->
-                    </select>
                   </div>
-
                   <!-- Datumkiezer -->
                   <div>
                     <input
@@ -945,12 +916,43 @@
                       <!-- Dynamisch invullen -->
                     </select>
                   </div>
+                  <div class="input-wrapper">
+                    <select
+                      id="category"
+                      name="category"
+                      class="input-field"
+                      required
+                    >
+                      <option value="Knippen" selected>Knippen</option>
+                      <option value="Haar en Scheren">Haar en Scheren</option>
+                      <option value="Baard Scheren">Baard Scheren</option>
+                      <option value="Kinderen tot 10 jaar">
+                        Kinderen tot 10 jaar
+                      </option>
+                      <option value="Senioren">Senioren 60+</option>
+                      <option value="Studenten knippen">
+                        Studenten knippen
+                      </option>
+                      <option value="Volledige service">
+                        Volledige service
+                      </option>
+                      <option value="Verven">Verven</option>
+                    </select>
 
+                    <select
+                      id="barberName"
+                      name="barberName"
+                      class="input-field"
+                      required
+                    >
+                      <option value="">Selecteer een kapper</option>
+                      <!-- Dynamisch invullen -->
+                    </select>
+                  </div>
                   <textarea
                     id="message"
                     name="message"
                     placeholder="Typ hier uw opmerkingen..."
-                    
                     class="input-field"
                   ></textarea>
 
@@ -1120,170 +1122,180 @@
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
     ></script>
     <script>
-  async function loadBarbers() {
-    const select = document.getElementById("barberName");
+      document.addEventListener("DOMContentLoaded", async () => {
+        const barberDropdown = document.getElementById("barberName");
+        const dateInput = document.getElementById("date");
+        const categoryDropdown = document.getElementById("category");
+        const timeDropdown = document.getElementById("time");
 
-    try {
-      // Fetch barbers from the API
-      const response = await fetch("/api/barbers");
-      const barbers = await response.json();
+        // Initialize barbers, date picker, and default slots
+        try {
+          await initializeDatePicker();
+          await loadAvailableSlots(dateInput.value, categoryDropdown.value);
+        } catch (error) {
+          console.error("Error during initialization:", error);
+        }
 
-      // Populate the dropdown
-      barbers.forEach((barber) => {
-        const option = document.createElement("option");
-        option.value = barber.name; // Set the value as the barber's ID
-        option.textContent = barber.name; // Set the display text as the barber's name
-        select.appendChild(option);
+        // Event listeners for dynamic updates
+        dateInput.addEventListener("change", async () => {
+          await loadAvailableSlots(dateInput.value, categoryDropdown.value);
+        });
+
+        categoryDropdown.addEventListener("change", async () => {
+          await loadAvailableSlots(dateInput.value, categoryDropdown.value);
+        });
+
+        timeDropdown.addEventListener("change", async () => {
+          const selectedDate = dateInput.value;
+          const selectedTime = timeDropdown.value;
+          const selectedCategory = categoryDropdown.value;
+          await loadAvailableBarbers(
+            selectedDate,
+            selectedTime,
+            selectedCategory
+          );
+        });
+
+        // Initialize date picker
+        async function initializeDatePicker() {
+          try {
+            const response = await fetch("/api/fully-booked-dates");
+            const data = await response.json();
+            const fullyBookedDates = data.fullyBookedDates;
+
+            flatpickr(dateInput, {
+              disable: fullyBookedDates.map((date) => new Date(date)),
+              minDate: "today",
+              maxDate: new Date().fp_incr(30),
+              dateFormat: "Y-m-d",
+            });
+
+            const today = new Date().toISOString().split("T")[0];
+            dateInput.value = today; // Default to today's date
+          } catch (error) {
+            console.error("Error initializing date picker:", error);
+            Swal.fire({
+              title: "Opps",
+              text: "Er is iets misgegaan, probeer ons te bellen voor een afspraak",
+              icon: "error",
+              confirmButtonText: "Okè",
+            });
+          }
+        }
+
+        // Load available slots
+        async function loadAvailableSlots(date, category) {
+          if (!date || !category) return;
+
+          try {
+            const response = await fetch(
+              `/api/available-slots?date=${date}&category=${category}`
+            );
+            const data = await response.json();
+
+            if (data.error) {
+              console.error(data.error);
+              timeDropdown.innerHTML = `<option>${data.error}</option>`;
+            } else {
+              timeDropdown.innerHTML = data.availableSlots
+                .map((slot) => `<option value="${slot}">${slot}</option>`)
+                .join("");
+
+              // Trigger barber loading for the first available time slot
+              if (data.availableSlots.length > 0) {
+                await loadAvailableBarbers(
+                  date,
+                  data.availableSlots[0],
+                  category
+                );
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching available slots:", error);
+            timeDropdown.innerHTML = "<option>Error loading slots</option>";
+            Swal.fire({
+              title: "Opps",
+              text: "Er is iets misgegaan, probeer ons te bellen voor een afspraak",
+              icon: "error",
+              confirmButtonText: "Okè",
+            });
+          }
+        }
+
+        // Load available barbers
+        async function loadAvailableBarbers(date, time, category) {
+          if (!date || !time || !category) {
+            barberDropdown.innerHTML = `<option value="">Select a category, date, and time</option>`;
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `/api/available-barbers?date=${date}&time=${time}&category=${category}`
+            );
+            const data = await response.json();
+
+            if (data.error) {
+              barberDropdown.innerHTML = `<option>${data.error}</option>`;
+            } else {
+              barberDropdown.innerHTML = data.availableBarbers
+                .map((barber) => `<option value="${barber}">${barber}</option>`)
+                .join("");
+            }
+          } catch (error) {
+            console.error("Error fetching available barbers:", error);
+            barberDropdown.innerHTML = `<option value="">Error loading barbers</option>`;
+            Swal.fire({
+              title: "Opps",
+              text: "Er is iets misgegaan, probeer ons te bellen voor een afspraak",
+              icon: "error",
+              confirmButtonText: "Okè",
+            });
+          }
+        }
       });
-    } catch (error) {
-      console.error("Error fetching barbers:", error);
-    }
-  }
 
-  // Load barbers when the page is loaded
-  document.addEventListener("DOMContentLoaded", loadBarbers);
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const dateInput = document.getElementById("date");
+      document.addEventListener("DOMContentLoaded", () => {
+        const dateInput = document.getElementById("date");
+        const categoryDropdown = document.getElementById("category");
+        const timeDropdown = document.getElementById("time");
 
-    try {
-      const response = await fetch("/api/fully-booked-dates");
-      const data = await response.json();
+        async function loadAvailableSlots(date, category) {
+          if (!date || !category) return;
 
-      const fullyBookedDates = data.fullyBookedDates;
+          try {
+            const response = await fetch(
+              `/api/available-slots?date=${date}&category=${category}`
+            );
+            const data = await response.json();
 
-      // Initialize Flatpickr
-      flatpickr(dateInput, {
-        disable: fullyBookedDates.map((date) => new Date(date)), // Disable fully booked dates
-        minDate: "today", // Prevent past dates
-        maxDate: new Date().fp_incr(30), // Allow booking up to 30 days in advance
-        dateFormat: "Y-m-d", // Match the backend date format
+            if (data.error) {
+              timeDropdown.innerHTML = `<option>${data.error}</option>`;
+            } else {
+              timeDropdown.innerHTML = data.availableSlots
+                .map((slot) => `<option value="${slot}">${slot}</option>`)
+                .join("");
+            }
+          } catch (error) {
+            console.error("Error fetching available slots:", error);
+            timeDropdown.innerHTML = "<option>Error loading slots</option>";
+            Swal.fire({
+              title: "Opps",
+              text: "Er is iets misgegaan, probeer ons te bellen voor een afspraak",
+              icon: "error",
+              confirmButtonText: "Okè",
+            });
+          }
+        }
+
+        dateInput.addEventListener("change", () => {
+          loadAvailableSlots(dateInput.value, categoryDropdown.value);
+        });
+
+        categoryDropdown.addEventListener("change", () => {
+          loadAvailableSlots(dateInput.value, categoryDropdown.value);
+        });
       });
-    } catch (error) {
-      console.error("Error fetching fully booked dates:", error);
-    }
-  });
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
-  const categoryDropdown = document.getElementById("category");
-  const dateInput = document.getElementById("date");
-  const timeDropdown = document.getElementById("time");
-
-  // Define service durations
-  const serviceDurations = {
-    "Knippen": 30,
-    "Haar en Scheren": 45,
-    "Baard Scheren": 15,
-    "Kinderen tot 10 jaar": 30,
-    "Senioren 60+": 15,
-    "Studenten knippen": 30,
-    "Volledige service": 60,
-    "Verven": 15,
-  };
-
-  // Fetch fully booked dates and initialize the date picker
-  try {
-    const response = await fetch("/api/fully-booked-dates");
-    const data = await response.json();
-    const fullyBookedDates = data.fullyBookedDates;
-
-    flatpickr(dateInput, {
-      disable: fullyBookedDates.map((date) => new Date(date)),
-      minDate: "today",
-      maxDate: new Date().fp_incr(30),
-      dateFormat: "Y-m-d",
-    });
-
-    // Trigger time slot loading for the default category and today's date
-    const defaultCategory = categoryDropdown.value;
-    const defaultDate = new Date().toISOString().split("T")[0];
-    dateInput.value = defaultDate; // Set today's date in the input
-
-    await loadAvailableSlots(defaultDate, defaultCategory);
-  } catch (error) {
-    console.error("Error initializing date picker or loading slots:", error);
-  }
-
-  // Load available slots when the date or category changes
-  dateInput.addEventListener("change", async () => {
-    const selectedDate = dateInput.value;
-    const selectedCategory = categoryDropdown.value;
-    if (selectedDate && selectedCategory) {
-      await loadAvailableSlots(selectedDate, selectedCategory);
-    }
-  });
-
-  categoryDropdown.addEventListener("change", async () => {
-    const selectedDate = dateInput.value;
-    const selectedCategory = categoryDropdown.value;
-    if (selectedDate && selectedCategory) {
-      await loadAvailableSlots(selectedDate, selectedCategory);
-    }
-  });
-
-  // Function to fetch and display available slots
-  async function loadAvailableSlots(date, category) {
-    if (!date || !category) return;
-
-    const serviceDuration = serviceDurations[category];
-    if (!serviceDuration) {
-      timeDropdown.innerHTML = "<option>Invalid category</option>";
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/available-slots?date=${date}&category=${category}`);
-      const data = await response.json();
-
-      const startTime = 11 * 60; // 11:00 AM in minutes
-      const endTime = 20 * 60;   // 8:00 PM in minutes
-
-      const allSlots = [];
-      for (let time = startTime; time < endTime; time += serviceDuration) {
-        const hours = Math.floor(time / 60).toString().padStart(2, "0");
-        const minutes = (time % 60).toString().padStart(2, "0");
-        const formattedTime = `${hours}:${minutes}`;
-        allSlots.push({ timeInMinutes: time, formattedTime });
-      }
-
-      const bookedSlots = data.bookedSlots || [];
-
-      timeDropdown.innerHTML = allSlots
-        .map((slot) => {
-          const isAvailable = !bookedSlots.includes(slot.formattedTime);
-          return `<option value="${slot.formattedTime}" ${isAvailable ? "" : "disabled"}>${slot.formattedTime} ${isAvailable ? "(Available)" : "(Booked)"}</option>`;
-        })
-        .join("");
-    } catch (error) {
-      console.error("Error loading available slots:", error);
-      timeDropdown.innerHTML = "<option>Error fetching slots</option>";
-    }
-  }
-});
-
-
-</script>
-<script>
-  document.getElementById("category").addEventListener("change", async (event) => {
-    const category = event.target.value;
-    const date = document.getElementById("date").value;
-
-    if (!date || !category) return;
-
-    try {
-      const response = await fetch(`/api/available-slots?date=${date}&category=${category}`);
-      const data = await response.json();
-
-      const timeDropdown = document.getElementById("time");
-      timeDropdown.innerHTML = data.availableSlots
-        .map((slot) => `<option value="${slot}">${slot}</option>`)
-        .join("");
-    } catch (error) {
-      console.error("Error fetching time slots:", error);
-    }
-  });
-</script>
+    </script>
   </body>
 </html>
