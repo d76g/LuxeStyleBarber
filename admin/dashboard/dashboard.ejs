@@ -24,7 +24,6 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
   </head>
   <body class="bg-gray-50 w-full h-screen">
     <nav class="bg-white border-gray-200">
@@ -96,47 +95,37 @@
       </div>
     </nav>
     <div class="flex flex-col items-center w-3/4 my-10 h-screen mx-auto">
-      <div class="flex justify-between items-center mb-5 space-x-4 w-3/4">
-        <div>
-          <label
-            for="filterDate"
-            class="block text-sm font-medium text-gray-700"
-            >Filter by Date:</label
-          >
-          <input
-            id="filterDate"
-            type="text"
-            placeholder="Select a date"
-            class="w-60 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-        <div>
-          <label
-            for="filterMonth"
-            class="block text-sm font-medium text-gray-700"
-            >Filter by Month:</label
-          >
-          <input
-            id="filterMonth"
-            type="text"
-            class="w-60 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Select Month"
-          />
-        </div>
-        <div>
+      <div class="flex justify-end w-full mb-3">
+        <div class="flex w-full">
           <button
-            id="resetFilters"
-            class="text-white bg-gray-500 hover:bg-gray-700 px-4 py-2 rounded-md"
+            type="button"
+            class="text-white bg-red-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            data-filter="previous"
+            onclick="filterAppointments('previous')"
           >
-            Reset Filters
+          Vorige datum
+          </button>
+          <button
+            type="button"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            data-filter="today"
+            onclick="filterAppointments('today')"
+          >
+            Vandaag
+          </button>
+          <button
+            type="button"
+            class="text-white bg-green-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+            data-filter="upcoming"
+            onclick="filterAppointments('upcoming')"
+          >
+            Komende datum
           </button>
         </div>
-      </div>
 
-      <div class="flex justify-end w-full mb-3">
         <button
           type="button"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          class="add-appointment text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
         >
           Afspraak Maken
         </button>
@@ -152,33 +141,7 @@
               <th scope="col" class="px-6 py-3">Action</th>
             </tr>
           </thead>
-          <tbody>
-            <% appointments.forEach(appointment => { %>
-            <tr class="bg-white border-b">
-              <td
-                class="px-6 py-4 font-medium text-blue-500 cursor-pointer hover:underline"
-                onclick="openDetailsModal('<%= JSON.stringify(appointment) %>')"
-              >
-                <%= appointment.name %>
-              </td>
-              <td class="px-6 py-4"><%= appointment.time %></td>
-              <td class="px-6 py-4">
-                <%= appointment.date ? appointment.date : 'N/A' %>
-              </td>
-
-              <td class="px-6 py-4 space-x-2">
-                <button
-                  class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer"
-                  onclick="openEditModal('<%= appointment.id %>')"
-                ></button>
-                <button
-                  class="fa-solid fa-trash text-red-500 cursor-pointer"
-                  onclick="deleteAppointment('<%= appointment.id %>')"
-                ></button>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
       <div
@@ -456,26 +419,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
-      flatpickr("#filterDate", {
-        dateFormat: "Y-m-d",
-      });
-
-      flatpickr("#filterMonth", {
-        plugins: [
-          new monthSelectPlugin({
-            shorthand: true, // Show short month names (e.g., "Jan", "Feb")
-            dateFormat: "Y-m", // Format returned as "YYYY-MM" for filtering
-            altFormat: "F Y", // Display format as "Month YYYY"
-            theme: "dark", // Use the dark theme
-          }),
-        ],
-        onChange: function (selectedDates, dateStr) {
-          filterAppointmentsByMonth(dateStr); // Call your filtering function
-        },
-      });
-
       const modalBackground = document.getElementById("modalBackground");
-      const openModalButton = document.querySelector("button.bg-blue-700");
+      const openModalButton = document.querySelector("button.add-appointment");
       const closeModalButton = document.getElementById("closeModal");
 
       openModalButton.addEventListener("click", () => {
@@ -511,80 +456,6 @@
           alert("An error occurred while deleting the appointment.");
         }
       }
-
-      document
-        .getElementById("filterDate")
-        .addEventListener("change", function () {
-          const selectedDate = this.value; // Get the selected date in YYYY-MM-DD format
-          filterAppointmentsByDate(selectedDate);
-        });
-
-      document
-        .getElementById("filterMonth")
-        .addEventListener("change", function () {
-          const selectedMonth = this.value; // Get the selected month in YYYY-MM format
-          filterAppointmentsByMonth(selectedMonth);
-        });
-      document.querySelectorAll("tbody tr").forEach((row) => {
-        const appointmentDate =
-          row.querySelector("td:nth-child(3)").textContent;
-        console.log("Date in row:", appointmentDate);
-      });
-
-      function filterAppointmentsByDate(date) {
-        const rows = document.querySelectorAll("tbody tr"); // Select all rows in the table
-
-        rows.forEach((row) => {
-          // Get the date text and trim whitespace
-          const appointmentDate = row
-            .querySelector("td:nth-child(3)")
-            .textContent.trim(); // Assuming date is in the 3rd column
-
-          if (appointmentDate === date) {
-            row.style.display = ""; // Show the row
-          } else {
-            row.style.display = "none"; // Hide the row
-          }
-        });
-      }
-      // Event listener for resetting filters
-      document
-        .getElementById("resetFilters")
-        .addEventListener("click", function () {
-          resetFilters();
-        });
-
-      // Function to reset all filters
-      function resetFilters() {
-        const rows = document.querySelectorAll("tbody tr"); // Select all rows in the table
-
-        // Show all rows
-        rows.forEach((row) => {
-          row.style.display = "";
-        });
-
-        // Clear input values
-        document.getElementById("filterDate").value = "";
-        document.getElementById("filterMonth").value = "";
-      }
-
-      function filterAppointmentsByMonth(month) {
-        const rows = document.querySelectorAll("tbody tr"); // Select all rows in the table
-
-        rows.forEach((row) => {
-          const appointmentDate = row
-            .querySelector("td:nth-child(3)")
-            .textContent.trim(); // Assuming date is in the 3rd column
-          const appointmentMonth = appointmentDate.slice(0, 7); // Extract YYYY-MM from YYYY-MM-DD
-
-          if (appointmentMonth === month) {
-            row.style.display = ""; // Show the row
-          } else {
-            row.style.display = "none"; // Hide the row
-          }
-        });
-      }
-
       function openDetailsModal(appointmentData) {
         // Parse the JSON string back into an object
         const appointment = JSON.parse(appointmentData);
@@ -611,7 +482,6 @@
         document.getElementById("detailsModal").classList.add("hidden");
       }
     </script>
-    {# add logic #}
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
         const addForm = document.getElementById("appointmentForm");
@@ -699,11 +569,11 @@
               }
 
               Swal.fire({
-              title: "Succes",
-              text: "Succesvol bijgewerkt",
-              icon: "success",
-              confirmButtonText: "Okè",
-            });
+                title: "Succes",
+                text: "Succesvol bijgewerkt",
+                icon: "success",
+                confirmButtonText: "Okè",
+              });
               location.reload(); // Reload to update the table
             } catch (error) {
               console.error("Error saving changes:", error);
@@ -827,7 +697,8 @@
             }
           } catch (error) {
             console.error("Error loading available slots:", error);
-            timeDropdown.innerHTML = "<option>Fout bij het laden van slots</option>";
+            timeDropdown.innerHTML =
+              "<option>Fout bij het laden van slots</option>";
           }
         }
 
@@ -864,6 +735,60 @@
 
         window.openEditModal = openEditModal;
         window.closeEditModal = closeEditModal;
+      });
+    </script>
+    <script>
+      async function filterAppointments(filter) {
+        try {
+          // Fetch filtered appointments
+          const response = await fetch(
+            `/admin/dashboard/appointments?filter=${filter}`
+          );
+          const appointments = await response.json();
+
+          // Clear existing table body
+          const tableBody = document.querySelector("table tbody");
+          tableBody.innerHTML = "";
+
+          // Populate table with new data
+          appointments.forEach((appointment) => {
+            const row = document.createElement("tr");
+            row.classList.add("bg-white", "border-b");
+
+            row.innerHTML = `
+  <td
+    class="px-6 py-4 font-medium text-blue-500 cursor-pointer hover:underline"
+    onclick="openDetailsModal('${JSON.stringify(appointment)
+      .replace(/'/g, "&#39;")
+      .replace(/"/g, "&quot;")}')"
+  >
+    ${appointment.name}
+  </td>
+  <td class="px-6 py-4">${appointment.time}</td>
+  <td class="px-6 py-4">${appointment.date || "N/A"}</td>
+  <td class="px-6 py-4 space-x-2">
+    <button
+      class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer"
+      onclick="openEditModal('${appointment.id}')"
+    ></button>
+    <button
+      class="fa-solid fa-trash text-red-500 cursor-pointer"
+      onclick="deleteAppointment('${appointment.id}')"
+    ></button>
+  </td>
+`;
+
+            tableBody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching filtered appointments:", error);
+          alert("Failed to fetch appointments. Please try again.");
+        }
+      }
+
+      // Load today's appointments by default
+      window.addEventListener("DOMContentLoaded", () => {
+        filterAppointments("today");
       });
     </script>
   </body>

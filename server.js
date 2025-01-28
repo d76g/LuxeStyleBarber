@@ -204,28 +204,78 @@ app.post("/admin/dashboard/add-appointment", async (req, res) => {
     // Send emails (omitted for brevity)
     // Email content
     const adminEmailContent = `
-    <h1>Nieuwe afspraak geboekt</h1>
-    <p><strong>Naam:</strong> ${name}</p>
-    <p><strong>E-mail:</strong> ${email}</p>
-    <p><strong>Telefoon:</strong> ${phone}</p>
-    <p><strong>Categorie:</strong> ${category}</p>
-    <p><strong>Datum:</strong> ${date}</p>
-    <p><strong>Tijd:</strong> ${time}</p>
-    <p><strong>Kapper:</strong> ${barberName}</p>
-    <p><strong>Bericht:</strong> ${message || "Geen bericht opgegeven"}</p>
-  `;
-
-    const customerEmailContent = `
-  <h1>Afspraakbevestiging</h1>
-  <p>Beste ${name},</p>
-  <p>Bedankt voor het boeken van een afspraak bij ons. Hier zijn de details van uw afspraak:</p>
-  <p><strong>Categorie:</strong> ${category}</p>
-  <p><strong>Datum:</strong> ${date}</p>
-  <p><strong>Tijd:</strong> ${time}</p>
-  <p><strong>Kapper:</strong> ${barberName}</p>
-  <p><strong>Bericht:</strong> ${message || "Geen bericht opgegeven"}</p>
-  <p>We kijken ernaar uit om u te zien!</p>
+  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+    <h1 style="color: #4b68ff;">Nieuwe Afspraak Gemaakt</h1>
+    <p style="font-size: 16px;">Hier zijn de details van de nieuwe afspraak:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Naam:</td>
+        <td style="padding: 5px;">${name}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">E-mail:</td>
+        <td style="padding: 5px;">${email}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Telefoon:</td>
+        <td style="padding: 5px;">${phone}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+        <td style="padding: 5px;">${category}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Datum:</td>
+        <td style="padding: 5px;">${date}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Tijd:</td>
+        <td style="padding: 5px;">${time}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+        <td style="padding: 5px;">${barberName}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+        <td style="padding: 5px;">${message || "Geen bericht opgegeven"}</td>
+      </tr>
+    </table>
+  </div>
 `;
+
+
+const customerEmailContent = `
+<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+  <h1 style="color: #4b68ff;">Afspraakbevestiging</h1>
+  <p style="font-size: 16px;">Beste ${name},</p>
+  <p style="font-size: 16px;">Bedankt voor het boeken van een afspraak bij ons. Hier zijn de details van uw afspraak:</p>
+  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+      <td style="padding: 5px;">${category}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Datum:</td>
+      <td style="padding: 5px;">${date}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Tijd:</td>
+      <td style="padding: 5px;">${time}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+      <td style="padding: 5px;">${barberName}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+      <td style="padding: 5px;">${message || "Geen bericht opgegeven"}</td>
+    </tr>
+  </table>
+  <p style="margin-top: 20px; font-size: 16px;">We kijken ernaar uit om u te zien!</p>
+</div>
+`;
+
 
     // // Send emails
     await transporter.sendMail({
@@ -289,28 +339,78 @@ app.post("/book-appointment", async (req, res) => {
     // Send emails (omitted for brevity)
     // Email content
     const adminEmailContent = `
-    <h1>Nieuwe afspraak geboekt</h1>
-    <p><strong>Naam:</strong> ${name}</p>
-    <p><strong>E-mail:</strong> ${email}</p>
-    <p><strong>Telefoon:</strong> ${phone}</p>
-    <p><strong>Categorie:</strong> ${category}</p>
-    <p><strong>Datum:</strong> ${date}</p>
-    <p><strong>Tijd:</strong> ${time}</p>
-    <p><strong>Kapper:</strong> ${barberName}</p>
-    <p><strong>Bericht:</strong> ${message || "Geen bericht opgegeven"}</p>
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+      <h1 style="color: #4b68ff;">Nieuwe Afspraak Gemaakt</h1>
+      <p style="font-size: 16px;">Hier zijn de details van de nieuwe afspraak:</p>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">Naam:</td>
+          <td style="padding: 5px;">${name}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">E-mail:</td>
+          <td style="padding: 5px;">${email}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">Telefoon:</td>
+          <td style="padding: 5px;">${phone}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+          <td style="padding: 5px;">${category}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">Datum:</td>
+          <td style="padding: 5px;">${date}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">Tijd:</td>
+          <td style="padding: 5px;">${time}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+          <td style="padding: 5px;">${barberName}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+          <td style="padding: 5px;">${message || "Geen bericht opgegeven"}</td>
+        </tr>
+      </table>
+    </div>
   `;
+  
 
-    const customerEmailContent = `
-  <h1>Afspraakbevestiging</h1>
-  <p>Beste ${name},</p>
-  <p>Bedankt voor het boeken van een afspraak bij ons. Hier zijn de details van uw afspraak:</p>
-  <p><strong>Categorie:</strong> ${category}</p>
-  <p><strong>Datum:</strong> ${date}</p>
-  <p><strong>Tijd:</strong> ${time}</p>
-  <p><strong>Kapper:</strong> ${barberName}</p>
-  <p><strong>Bericht:</strong> ${message || "Geen bericht opgegeven"}</p>
-  <p>We kijken ernaar uit om u te zien!</p>
+  const customerEmailContent = `
+  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+    <h1 style="color: #4b68ff;">Afspraakbevestiging</h1>
+    <p style="font-size: 16px;">Beste ${name},</p>
+    <p style="font-size: 16px;">Bedankt voor het boeken van een afspraak bij ons. Hier zijn de details van uw afspraak:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+        <td style="padding: 5px;">${category}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Datum:</td>
+        <td style="padding: 5px;">${date}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Tijd:</td>
+        <td style="padding: 5px;">${time}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+        <td style="padding: 5px;">${barberName}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+        <td style="padding: 5px;">${message || "Geen bericht opgegeven"}</td>
+      </tr>
+    </table>
+    <p style="margin-top: 20px; font-size: 16px;">We kijken ernaar uit om u te zien!</p>
+  </div>
 `;
+
 
     // Send emails
     await transporter.sendMail({
@@ -339,7 +439,7 @@ const serviceDurations = {
   "Haar en Scheren": 45,
   "Baard Scheren": 15,
   "Kinderen tot 10 jaar": 30,
-  Senioren: 15,
+  Senioren: 30,
   "Studenten knippen": 30,
   "Volledige service": 60,
   Verven: 15,
@@ -375,7 +475,7 @@ app.get("/api/available-slots", async (req, res) => {
     }
 
     // Create time slots
-    const startTime = 11 * 60; // 11:00 AM in minutes
+    const startTime = 10 * 60; // 11:00 AM in minutes
     const endTime = 20 * 60; // 8:00 PM in minutes
     const now = new Date();
 
@@ -462,7 +562,9 @@ app.get("/api/available-barbers", async (req, res) => {
     res.json({ availableBarbers });
   } catch (error) {
     console.error("Error fetching available barbers:", error);
-    res.status(500).json({ error: "Het ophalen van beschikbare kappers is mislukt." });
+    res
+      .status(500)
+      .json({ error: "Het ophalen van beschikbare kappers is mislukt." });
   }
 });
 
@@ -543,29 +645,78 @@ app.put("/api/appointments/:id", async (req, res) => {
     // Send emails (omitted for brevity)
     // Email content
     const adminEmailContent = `
-    <h1>Afspraak gewijzigd</h1>
-    <p>De volgende afspraak is bijgewerkt:</p>
-    <p><strong>Naam:</strong> ${name}</p>
-    <p><strong>E-mail:</strong> ${email}</p>
-    <p><strong>Telefoon:</strong> ${phone}</p>
-    <p><strong>Categorie:</strong> ${category}</p>
-    <p><strong>Nieuwe datum:</strong> ${date}</p>
-    <p><strong>Nieuwe tijd:</strong> ${time}</p>
-    <p><strong>Kapper:</strong> ${barberName}</p>
-    <p><strong>Bericht:</strong> ${message || "Geen bericht opgegeven"}</p>
-  `;
+  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+    <h1 style="color: #4b68ff;">Afspraak Gewijzigd</h1>
+    <p style="font-size: 16px;">De volgende afspraak is bijgewerkt:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Naam:</td>
+        <td style="padding: 5px;">${name}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">E-mail:</td>
+        <td style="padding: 5px;">${email}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Telefoon:</td>
+        <td style="padding: 5px;">${phone}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+        <td style="padding: 5px;">${category}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Nieuwe Datum:</td>
+        <td style="padding: 5px;">${date}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Nieuwe Tijd:</td>
+        <td style="padding: 5px;">${time}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+        <td style="padding: 5px;">${barberName}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+        <td style="padding: 5px;">${message || "Geen bericht opgegeven"}</td>
+      </tr>
+    </table>
+  </div>
+`;
 
     const customerEmailContent = `
-  <h1>Afspraakwijziging</h1>
-  <p>Beste ${name},</p>
-  <p>Uw afspraak is bijgewerkt. Hier zijn de nieuwe details:</p>
-  <p><strong>Categorie:</strong> ${category}</p>
-  <p><strong>Nieuwe datum:</strong> ${date}</p>
-  <p><strong>Nieuwe tijd:</strong> ${time}</p>
-  <p><strong>Kapper:</strong> ${barberName}</p>
-  <p><strong>Bericht:</strong> ${message || "Geen bericht opgegeven"}</p>
-  <p>Bedankt voor uw begrip. Neem contact met ons op als u nog vragen heeft.</p>
-  <p>We kijken ernaar uit om u te zien!</p>
+<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+  <h1 style="color: #4b68ff;">Afspraakwijziging</h1>
+  <p style="font-size: 16px;">Beste ${name},</p>
+  <p style="font-size: 16px;">Uw afspraak is bijgewerkt. Hier zijn de nieuwe details:</p>
+  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+      <td style="padding: 5px;">${category}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Nieuwe Datum:</td>
+      <td style="padding: 5px;">${date}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Nieuwe Tijd:</td>
+      <td style="padding: 5px;">${time}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+      <td style="padding: 5px;">${barberName}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+      <td style="padding: 5px;">${message || "Geen bericht opgegeven"}</td>
+    </tr>
+  </table>
+  <p style="margin-top: 20px; font-size: 16px;">
+    Bedankt voor uw begrip. Neem contact met ons op als u nog vragen heeft.
+  </p>
+  <p style="font-size: 16px;">We kijken ernaar uit om u te zien!</p>
+</div>
 `;
 
     // Send emails
@@ -623,34 +774,83 @@ app.delete("/api/appointments/:id", async (req, res) => {
 
     // Email content
     const adminEmailContent = `
-      <h1>Afspraak geannuleerd</h1>
-      <p>De volgende afspraak is geannuleerd:</p>
-      <p><strong>Naam:</strong> ${appointment.name}</p>
-      <p><strong>E-mail:</strong> ${appointment.email}</p>
-      <p><strong>Telefoon:</strong> ${appointment.phone}</p>
-      <p><strong>Categorie:</strong> ${appointment.category}</p>
-      <p><strong>Datum:</strong> ${appointment.date}</p>
-      <p><strong>Tijd:</strong> ${appointment.time}</p>
-      <p><strong>Kapper:</strong> ${appointment.barber_name}</p>
-      <p><strong>Bericht:</strong> ${
-        appointment.message || "Geen bericht opgegeven"
-      }</p>
-    `;
+  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+    <h1 style="color: #4b68ff;">Afspraak Geannuleerd</h1>
+    <p style="font-size: 16px;">De volgende afspraak is geannuleerd:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Naam:</td>
+        <td style="padding: 5px;">${appointment.name}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">E-mail:</td>
+        <td style="padding: 5px;">${appointment.email}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Telefoon:</td>
+        <td style="padding: 5px;">${appointment.phone}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+        <td style="padding: 5px;">${appointment.category}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Datum:</td>
+        <td style="padding: 5px;">${appointment.date}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Tijd:</td>
+        <td style="padding: 5px;">${appointment.time}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+        <td style="padding: 5px;">${appointment.barber_name}</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+        <td style="padding: 5px;">${
+          appointment.message || "Geen bericht opgegeven"
+        }</td>
+      </tr>
+    </table>
+  </div>
+`;
 
     const customerEmailContent = `
-      <h1>Afspraak geannuleerd</h1>
-      <p>Beste ${appointment.name},</p>
-      <p>Uw afspraak is geannuleerd. Hier zijn de details van de geannuleerde afspraak:</p>
-      <p><strong>Categorie:</strong> ${appointment.category}</p>
-      <p><strong>Datum:</strong> ${appointment.date}</p>
-      <p><strong>Tijd:</strong> ${appointment.time}</p>
-      <p><strong>Kapper:</strong> ${appointment.barber_name}</p>
-      <p><strong>Bericht:</strong> ${
+<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+  <h1 style="color: #4b68ff;">Afspraak Geannuleerd</h1>
+  <p style="font-size: 16px;">Beste ${appointment.name},</p>
+  <p style="font-size: 16px;">Uw afspraak is geannuleerd. Hier zijn de details van de geannuleerde afspraak:</p>
+  <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Categorie:</td>
+      <td style="padding: 5px;">${appointment.category}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Datum:</td>
+      <td style="padding: 5px;">${appointment.date}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Tijd:</td>
+      <td style="padding: 5px;">${appointment.time}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Kapper:</td>
+      <td style="padding: 5px;">${appointment.barber_name}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: bold; padding: 5px;">Bericht:</td>
+      <td style="padding: 5px;">${
         appointment.message || "Geen bericht opgegeven"
-      }</p>
-      <p>We vinden het jammer dat de afspraak is geannuleerd. Neem gerust contact met ons op als u een nieuwe afspraak wilt maken of vragen heeft.</p>
-      <p>We hopen u in de toekomst te mogen verwelkomen!</p>
-    `;
+      }</td>
+    </tr>
+  </table>
+  <p style="margin-top: 20px; font-size: 16px;">
+    We vinden het jammer dat de afspraak is geannuleerd. Neem gerust contact met ons op als u een nieuwe afspraak wilt maken of vragen heeft.
+  </p>
+  <p style="font-size: 16px;">We hopen u in de toekomst te mogen verwelkomen!</p>
+</div>
+`;
 
     // Send emails
     await transporter.sendMail({
@@ -723,6 +923,63 @@ app.get("/api/barbers", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch barbers." });
   }
 });
+
+app.get(
+  "/admin/dashboard/appointments",
+  authenticateToken,
+  async (req, res) => {
+    const { filter } = req.query;
+
+    console.log("Filter received:", filter); // Debug filter received
+
+    const today = new Date();
+    let query = `
+    SELECT id, name, time, email, category, phone, message, barber_name, TO_CHAR(date, 'YYYY-MM-DD') AS date
+    FROM Appointments
+  `;
+    let params = [];
+
+    if (filter === "previous") {
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1); // Yesterday's date
+      const thirtyDaysAgo = new Date(today);
+      thirtyDaysAgo.setDate(today.getDate() - 30); // 30 days before today
+      query += ` WHERE date >= $1 AND date <= $2`;
+      params = [
+        thirtyDaysAgo.toISOString().split("T")[0],
+        yesterday.toISOString().split("T")[0],
+      ];
+    } else if (filter === "today") {
+      const todayDate = today.toISOString().split("T")[0]; // Today's date
+      query += ` WHERE date = $1`;
+      params = [todayDate];
+    } else if (filter === "upcoming") {
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1); // Tomorrow's date
+      const fourteenDaysAhead = new Date(today);
+      fourteenDaysAhead.setDate(today.getDate() + 14); // 14 days ahead
+      query += ` WHERE date >= $1 AND date <= $2`;
+      params = [
+        tomorrow.toISOString().split("T")[0],
+        fourteenDaysAhead.toISOString().split("T")[0],
+      ];
+    }
+
+    query += ` ORDER BY date, time`;
+
+    console.log("Constructed Query:", query); // Log the query
+    console.log("Query Params:", params); // Log the parameters
+
+    try {
+      const result = await pool.query(query, params);
+      console.log("Query Result:", result.rows); // Log the result
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      res.status(500).json({ error: "Error fetching appointments." });
+    }
+  }
+);
 
 app.get("/admin/logout", (req, res) => {
   res.clearCookie("token"); // Clear the token cookie
