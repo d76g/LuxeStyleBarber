@@ -543,7 +543,7 @@ app.get("/api/available-barbers", async (req, res) => {
     const bookedResult = await pool.query(
       `SELECT barber_name 
        FROM Appointments 
-       WHERE date = $1 
+       WHERE date::text = $1  -- Ensure date comparison works
        AND (
          (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) BETWEEN $2 AND $3
          OR 
@@ -551,6 +551,7 @@ app.get("/api/available-barbers", async (req, res) => {
        )`,
       [date, timeInMinutes, timeInMinutes + serviceDuration, serviceDuration]
     );
+    
 
     const bookedBarbers = bookedResult.rows.map((row) => row.barber_name);
 
