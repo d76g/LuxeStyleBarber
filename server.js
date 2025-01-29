@@ -538,17 +538,15 @@ app.get("/api/available-barbers", async (req, res) => {
     const bookedResult = await pool.query(
       `SELECT barber_name 
        FROM Appointments 
-       WHERE DATE(date) = $1  -- Ensure we check only the selected date
+       WHERE DATE(date) = $1 
        AND (
          ($2 > (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) 
-          AND $2 < (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4)
+          AND $2 < (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $3::INT)  -- Explicitly cast $3 as INT
          )
        )`,
       [date, timeInMinutes, serviceDuration]
     );
     
-    
-
     const bookedBarbers = bookedResult.rows.map((row) => row.barber_name);
 
     if (bookedBarbers.length === allBarbers.length) {
