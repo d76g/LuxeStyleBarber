@@ -244,8 +244,7 @@ app.post("/admin/dashboard/add-appointment", async (req, res) => {
   </div>
 `;
 
-
-const customerEmailContent = `
+    const customerEmailContent = `
 <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
   <h1 style="color: #4b68ff;">Afspraakbevestiging</h1>
   <p style="font-size: 16px;">Beste ${name},</p>
@@ -275,7 +274,6 @@ const customerEmailContent = `
   <p style="margin-top: 20px; font-size: 16px;">We kijken ernaar uit om u te zien!</p>
 </div>
 `;
-
 
     // // Send emails
     await transporter.sendMail({
@@ -378,9 +376,8 @@ app.post("/book-appointment", async (req, res) => {
       </table>
     </div>
   `;
-  
 
-  const customerEmailContent = `
+    const customerEmailContent = `
   <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
     <h1 style="color: #4b68ff;">Afspraakbevestiging</h1>
     <p style="font-size: 16px;">Beste ${name},</p>
@@ -410,7 +407,6 @@ app.post("/book-appointment", async (req, res) => {
     <p style="margin-top: 20px; font-size: 16px;">We kijken ernaar uit om u te zien!</p>
   </div>
 `;
-
 
     // Send emails
     await transporter.sendMail({
@@ -522,57 +518,84 @@ app.get("/api/available-barbers", async (req, res) => {
   }
 
   try {
+    console.log("🔍 Debugging Query Execution...");
+    console.log("📅 Selected Date:", date);
+    console.log("⏰ Time in Minutes:", timeInMinutes);
+    console.log("⏳ Service Duration:", serviceDuration);
+    console.log("📋 SQL Query:");
+    console.log(`
+  SELECT barber_name 
+  FROM Appointments 
+  WHERE DATE(date) = '${date}' 
+  AND (
+    (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) BETWEEN ${timeInMinutes} AND ${
+      timeInMinutes + serviceDuration
+    }
+    OR 
+    (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + ${serviceDuration}) > ${timeInMinutes}
+  )
+`);
+
     const serviceDuration = serviceDurations[category];
     if (!serviceDuration) {
       return res.status(400).json({ error: "Ongeldige servicecategorie." });
     }
-  
+
     // Convert `time` to minutes since midnight
     const [hours, minutes] = time.split(":").map(Number);
     const timeInMinutes = hours * 60 + minutes;
-  
+
     // Fetch all barbers
     const barbersResult = await pool.query("SELECT name FROM Users");
     const allBarbers = barbersResult.rows.map((row) => row.name);
-  
+
     if (allBarbers.length === 0) {
       return res.status(400).json({ error: "Geen kappers beschikbaar" });
     }
-  
-    // Fetch booked barbers for the given date and time slot
+
     const bookedResult = await pool.query(
       `SELECT barber_name 
        FROM Appointments 
        WHERE DATE(date) = $1 
        AND (
-         (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) BETWEEN $2 AND $3
+         ($2 BETWEEN CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) 
+           AND CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4)
          OR 
-         (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4) > $2
+         ($3 BETWEEN CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) 
+           AND CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4)
        )`,
       [date, timeInMinutes, timeInMinutes + serviceDuration, serviceDuration]
     );
-  
+
     const bookedBarbers = bookedResult.rows.map((row) => row.barber_name);
-  
+
     if (bookedBarbers.length === allBarbers.length) {
       console.log("All barbers are booked for this time slot.");
       return res.json({ error: "Geen kappers beschikbaar voor deze tijd" });
     }
-  
-    const availableBarbers = allBarbers.filter(
-      (barber) => !bookedBarbers.includes(barber)
-    );
-  
-    console.log("Available Barbers:", availableBarbers);
-  
+
+    let availableBarbers;
+    if (bookedBarbers.length === allBarbers.length) {
+      console.log("❌ All barbers are booked.");
+      return res.json({ error: "Geen kappers beschikbaar voor deze tijd" });
+    } else if (bookedBarbers.length === 0) {
+      console.log("✅ No barbers are booked, returning all barbers.");
+      availableBarbers = allBarbers; // Return all barbers if none are booked
+    } else {
+      console.log("🟢 Some barbers are booked, filtering available ones.");
+      availableBarbers = allBarbers.filter(
+        (barber) => !bookedBarbers.includes(barber)
+      );
+    }
+
     // ✅ Return immediately after sending response
     return res.json({ availableBarbers });
-  
   } catch (error) {
     console.error("Error fetching available barbers:", error);
-    return res.status(500).json({ error: "Het ophalen van beschikbare kappers is mislukt." });
+    return res
+      .status(500)
+      .json({ error: "Het ophalen van beschikbare kappers is mislukt." });
   }
-  
 });
 
 app.get("/api/fully-booked-dates", async (req, res) => {
