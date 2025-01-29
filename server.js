@@ -526,24 +526,24 @@ app.get("/api/available-barbers", async (req, res) => {
     if (!serviceDuration) {
       return res.status(400).json({ error: "Ongeldige servicecategorie." });
     }
-
+  
     // Convert `time` to minutes since midnight
     const [hours, minutes] = time.split(":").map(Number);
     const timeInMinutes = hours * 60 + minutes;
-
+  
     // Fetch all barbers
     const barbersResult = await pool.query("SELECT name FROM Users");
     const allBarbers = barbersResult.rows.map((row) => row.name);
-
+  
     if (allBarbers.length === 0) {
       return res.status(400).json({ error: "Geen kappers beschikbaar" });
     }
-
-    // Fetch barbers booked for the given date and overlapping time slot
+  
+    // Fetch booked barbers for the given date and time slot
     const bookedResult = await pool.query(
       `SELECT barber_name 
        FROM Appointments 
-       WHERE date::text = $1  -- Ensure date comparison works
+       WHERE DATE(date) = $1 
        AND (
          (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) BETWEEN $2 AND $3
          OR 
@@ -551,22 +551,28 @@ app.get("/api/available-barbers", async (req, res) => {
        )`,
       [date, timeInMinutes, timeInMinutes + serviceDuration, serviceDuration]
     );
-    
-
+  
     const bookedBarbers = bookedResult.rows.map((row) => row.barber_name);
-
-    // Determine available barbers
+  
+    if (bookedBarbers.length === allBarbers.length) {
+      console.log("All barbers are booked for this time slot.");
+      return res.json({ error: "Geen kappers beschikbaar voor deze tijd" });
+    }
+  
     const availableBarbers = allBarbers.filter(
       (barber) => !bookedBarbers.includes(barber)
     );
-
-    res.json({ availableBarbers });
+  
+    console.log("Available Barbers:", availableBarbers);
+  
+    // ✅ Return immediately after sending response
+    return res.json({ availableBarbers });
+  
   } catch (error) {
     console.error("Error fetching available barbers:", error);
-    res
-      .status(500)
-      .json({ error: "Het ophalen van beschikbare kappers is mislukt." });
+    return res.status(500).json({ error: "Het ophalen van beschikbare kappers is mislukt." });
   }
+  
 });
 
 app.get("/api/fully-booked-dates", async (req, res) => {
