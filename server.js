@@ -540,14 +540,14 @@ app.get("/api/available-barbers", async (req, res) => {
        FROM Appointments 
        WHERE DATE(date) = $1 
        AND (
-         ($2 BETWEEN (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) - 30)
-          AND (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4 + 30))
+         (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) BETWEEN $2 - 30 AND $3 + 30
          OR 
-         ($3 BETWEEN (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) - 30)
-          AND (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4 + 30))
+         ($2 BETWEEN (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) 
+                    AND (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + $4))
        )`,
       [date, timeInMinutes, timeInMinutes + serviceDuration, serviceDuration]
     );
+    
     
 
     const bookedBarbers = bookedResult.rows.map((row) => row.barber_name);
