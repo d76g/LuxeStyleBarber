@@ -518,24 +518,6 @@ app.get("/api/available-barbers", async (req, res) => {
   }
 
   try {
-    console.log("🔍 Debugging Query Execution...");
-    console.log("📅 Selected Date:", date);
-    console.log("⏰ Time in Minutes:", timeInMinutes);
-    console.log("⏳ Service Duration:", serviceDuration);
-    console.log("📋 SQL Query:");
-    console.log(`
-  SELECT barber_name 
-  FROM Appointments 
-  WHERE DATE(date) = '${date}' 
-  AND (
-    (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT)) BETWEEN ${timeInMinutes} AND ${
-      timeInMinutes + serviceDuration
-    }
-    OR 
-    (CAST(substring(time, 1, 2) AS INT) * 60 + CAST(substring(time, 4, 2) AS INT) + ${serviceDuration}) > ${timeInMinutes}
-  )
-`);
-
     const serviceDuration = serviceDurations[category];
     if (!serviceDuration) {
       return res.status(400).json({ error: "Ongeldige servicecategorie." });
